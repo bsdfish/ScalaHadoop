@@ -1,0 +1,52 @@
+<project default="jar">
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+
+
+  <target name="compile">
+    <mkdir dir="build/classes"/>
+    <scalac srcdir="src" destdir="build/classes" classpathref="classpath" deprecation="yes"/>
+    <javac srcdir="src" destdir="build/classes" classpathref="classpath"/>
+    <copy todir="build/classes/lib">
+      <fileset dir="/opt/local/share/scala-2.8/lib/" includes="scala-lib*"/>
+    </copy>
+  </target>
+
+  <target name="doc">
+    <mkdir dir="doc"/>
+    <scaladoc srcdir="src/ScalaHadoop" destdir="doc" classpathref="classpath">
+        <include name="*.scala"/>
+        <include name="*.java"/>
+    </scaladoc>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar destfile="ScalaHadoop.jar"
+      basedir="build/classes"
+    />
+  </target>
+
+  <target name="run">
+    <exec executable="/Users/asimma/local/hadoop-0.20.2/bin/hadoop">
+       <arg line="jar ScalaHadoop.jar  com.asimma.ScalaHadoop.WordCount"/>
+     </exec>
+  </target>
+
+  <path id="classpath">
+    <fileset dir="/Users/asimma/local/hadoop-0.20.2" includes="**/*.jar"/>
+    <fileset dir="/opt/local/share/scala-2.8/lib" includes="*.jar"/>
+  </path>
+
+
+
+  <property name="scala.lib.dir" location="/opt/local/share/scala-2.8/lib"/>
+  <taskdef resource="scala/tools/ant/antlib.xml">
+   <classpath>
+    <pathelement location="${scala.lib.dir}/scala-compiler.jar"/>
+    <pathelement location="${scala.lib.dir}/scala-library.jar"/>
+    <pathelement location="${scala.lib.dir}/scalap.jar"/>
+   </classpath>
+  </taskdef>
+
+</project>
